@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f3f2ea">
+  <title>Namma Atlas — Bengaluru Metro in 3D</title>
+  <meta name="description" content="Explore Bengaluru's metro in geographic 3D. Operating lines, construction corridors and future connections, with dated evidence from BMRCL and the Government of India.">
+  <link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="stylesheet" href="vendor/maplibre-gl.css"><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="./" aria-label="Namma Atlas home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>NAMMA<span class="brand-light">ATLAS</span></span><span class="brand-caption">BENGALURU METRO, IN PERSPECTIVE</span></a>
+  <nav aria-label="Main navigation"><button class="nav-button active" id="network-nav">Explore network</button><button class="nav-button" id="status-nav">Project status</button><button class="nav-button" id="sources-nav">Sources <span>↗</span></button></nav>
+  <div class="city-tag"><span class="tiny-dot"></span> BENGALURU, IN <span class="city-clock" id="city-clock"></span></div>
+</header>
+<main class="workspace">
+  <aside class="sidebar" id="sidebar" aria-label="Metro network explorer">
+    <button class="mobile-handle" id="mobile-handle" aria-label="Expand or collapse network panel"><span></span><b>Explore the network</b><span class="handle-arrow">⌃</span></button>
+    <div class="sidebar-inner">
+      <div id="overview-heading"><div class="eyebrow"><span class="small-dash"></span> THE CITY, CONNECTED</div><h1>Every line.<br><em>One city.</em></h1><p class="intro">From the daily commute to the next connection. See Bengaluru take shape.</p></div>
+      <div class="search-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input id="station-search" type="search" placeholder="Find a station or line" aria-label="Search stations or lines" autocomplete="off" aria-controls="search-results" aria-expanded="false"><kbd>/</kbd><div id="search-results" class="search-results" hidden></div></div>
+      <div class="filter-row" id="filters" aria-label="Filter corridors"><button data-filter="all" class="filter active" aria-pressed="true">All lines</button><button data-filter="operational" class="filter" aria-pressed="false">Operating</button><button data-filter="construction" class="filter" aria-pressed="false">Building</button><button data-filter="proposed" class="filter" aria-pressed="false">Proposed</button></div>
+      <div class="list-heading"><span id="list-title">THE NETWORK</span><span id="line-count">8 CORRIDORS</span></div>
+      <div id="line-list" class="line-list" aria-live="polite"></div>
+      <div id="route-detail" hidden></div>
+      <div class="sidebar-footer"><div class="footer-number"><strong>96.1<span>km</span></strong><div>in passenger service<br><span>3 operating lines · 83 stations</span></div></div><button class="evidence-note" id="snapshot-button"><span class="evidence-icon">✓</span><span>Official-source snapshot<b>Checked 13 Nov 2026 · View evidence</b></span><span>↗</span></button></div>
+    </div>
+  </aside>
+  <section class="map-stage" aria-label="Interactive geographic metro map">
+    <div id="map"></div>
+    <div class="map-vignette"></div>
+    <div class="map-top"><div class="location-pill"><span class="tiny-dot"></span> BENGALURU <span class="pill-separator"></span><span id="map-coordinate">12.97° N &nbsp; 77.59° E</span></div><button class="layers-button glass" id="layers-button" aria-expanded="false" title="Map layers"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></svg> Layers</button></div>
+    <div class="layers-panel glass" id="layers-panel" hidden><div class="eyebrow">MAP LAYERS</div><label><input type="checkbox" id="show-buildings" checked><span>3D buildings</span><span class="switch"></span></label><label><input type="checkbox" id="show-labels" checked><span>Station labels</span><span class="switch"></span></label><label><input type="checkbox" id="show-expansion" checked><span>Expansion corridors</span><span class="switch"></span></label><p>Buildings appear as you zoom in. Station and track heights are illustrative.</p></div>
+    <div class="map-title" id="map-title"><div class="eyebrow">A DIFFERENT PERSPECTIVE</div><h2>Your city.<br><em>In motion.</em></h2><span>Drag to explore. Tilt to see more.</span></div>
+    <button class="map-notice glass" id="pink-notice"><span class="notice-dot"></span><span><b>Next connection: Pink Line</b><small>Inauguration scheduled 13 Nov · See official update ↗</small></span></button>
+    <div class="map-controls" aria-label="Map controls"><div class="dimension-toggle glass"><button id="view-2d" aria-pressed="false">2D</button><button id="view-3d" class="active" aria-pressed="true">3D</button></div><button id="zoom-in" class="control glass" title="Zoom in" aria-label="Zoom in">＋</button><button id="zoom-out" class="control glass" title="Zoom out" aria-label="Zoom out">−</button><button id="reset-view" class="control glass" title="Fit entire network" aria-label="Fit entire network"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button><button id="compass" class="control glass compass" title="Reset north" aria-label="Reset bearing to north"><span id="north-arrow">↑</span><small>N</small></button></div>
+    <div class="map-bottom"><div class="legend glass"><span><i class="legend-line operating"></i>Operating</span><span><i class="legend-line building"></i>Building / scheduled</span><span><i class="legend-line proposed"></i>Proposed</span><button id="legend-help" aria-label="Explain map legend">i</button></div><div class="map-hint"><span class="hint-icon">↔</span> Scroll to zoom <span>·</span> Right-drag to tilt</div></div>
+    <div class="map-credit">Geographic atlas <span>·</span> Dated evidence, no live service feed</div>
+    <div class="loading-panel" id="loading-panel"><span class="loading-mark"></span><b>Putting Bengaluru in perspective</b><span>Loading the geographic network…</span></div>
+    <div class="map-error glass" id="map-error" hidden><b>The street map could not load.</b><p>The network and sources are still available. Check your connection and try again.</p><button id="retry-map">Reload map</button></div>
+  </section>
+</main>
+<dialog id="information-dialog"><div class="dialog-header"><div><div class="eyebrow" id="dialog-eyebrow">BEHIND THE MAP</div><h2 id="dialog-title">Sources & freshness</h2></div><button class="close-button" id="close-dialog" aria-label="Close dialog">×</button></div><div class="dialog-content" id="dialog-content"></div></dialog>
+<div class="toast" id="toast" role="status" hidden></div>
+<script src="vendor/maplibre-gl.js"></script><script type="module" src="app.js"></script>
+</body></html>
