@@ -2,9 +2,9 @@
 
 An interactive geographic atlas of Bengaluru's Namma Metro, showing operating lines, construction corridors and proposed connections on a real street map.
 
-[Open the hosted atlas](https://namma-atlas-bengaluru.inzi00.chatgpt.site) · [Status and evidence register](dist/data/status.json) · [Attributed geography](dist/data/network.json)
+[Open Namma Atlas](https://anzar00.github.io/namma-atlas/) · [Status and evidence register](dist/data/status.json) · [Attributed geography](dist/data/network.json)
 
-The hosted preview currently requires the owner's ChatGPT account. Repository visibility and website access are separate settings.
+The atlas and this repository are public. The website is hosted on GitHub Pages; the earlier ChatGPT-hosted preview is a separate deployment.
 
 ![Geographic overview](dist/preview.jpg)
 
@@ -121,7 +121,19 @@ Station/platform status follows corridor evidence. No station-level completion p
 4. After a geometry refresh, review Pink's visual split at vertex 108, Blue's split at vertex 206 and Pink's 12.9296° N platform latitude heuristic in `app.js`. These are snapshot-specific visual approximations, not stable engineering identifiers or contract boundaries.
 5. Validate the files, inspect both renderers and mixed operating/future interchanges, then commit the related changes together and deploy `dist/` separately.
 
-There is currently **no GitHub Action, cron job or automatic data-refresh process**. Pushing this repository does not automatically deploy the hosted preview.
+There is **no scheduled or automatic data-refresh process**. GitHub Actions validates and deploys the committed website; it does not fetch new geography or recheck official publications. The separate ChatGPT-hosted preview is not updated by this workflow.
+
+## GitHub Pages deployment
+
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml) runs on pushes to `main` and can also be started manually from the Actions tab. It:
+
+1. Checks out the repository and verifies both JavaScript modules and the geography/evidence references.
+2. Uploads **only `dist/`** as the Pages artifact. Collection scripts, the repository README and hosting metadata are not included in the website artifact.
+3. Deploys that artifact through the `github-pages` environment to [anzar00.github.io/namma-atlas/](https://anzar00.github.io/namma-atlas/).
+
+The Pages publishing source is **GitHub Actions**. There is no package installation or compilation step. Application asset/data paths are relative, so they work under the `/namma-atlas/` project path. Map tiles are still loaded from the external providers described above.
+
+To publish an update, commit the reviewed application or data changes to `main` and check the **Deploy Namma Atlas to GitHub Pages** workflow. Failed validation prevents deployment. A deployment republishes the committed status snapshot; fresh official research still requires the maintenance steps above.
 
 ## Rendering
 
@@ -139,7 +151,7 @@ No package installation or build step is required. Serve the static directory ov
 python3 -m http.server 8080 --directory dist
 ```
 
-Open `http://localhost:8080`. Internet access is required for map tiles. GitHub Pages or another static host can serve the same directory after explicit hosting configuration.
+Open `http://localhost:8080`. Internet access is required for map tiles. The same `dist/` directory is published by the GitHub Pages workflow.
 
 ## Repository structure
 
@@ -155,6 +167,7 @@ Open `http://localhost:8080`. Internet access is required for map tiles. GitHub 
 | `scripts/collect_geography.py` | Explicit, on-demand geography collection |
 | `scripts/validate_data.py` | Dataset integrity and evidence-reference checks |
 | `.openai/hosting.json` | Existing hosted-preview identity and static directory |
+| `.github/workflows/pages.yml` | Validation and deployment of `dist/` to GitHub Pages |
 
 ## Validation and limitations
 
